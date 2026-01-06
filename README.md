@@ -104,3 +104,168 @@ The automated deployment approach reduces manual configuration errors,
 improves deployment speed, and ensures consistency across environments.
 This solution demonstrates a production-ready, enterprise-grade infrastructure
 automation strategy.
+
+
+------------------------------------------------------------
+
+Azure Enterprise Network Architecture – Design Decisions
+Overview
+
+This repository contains an enterprise-style Azure infrastructure deployed using Terraform.
+The goal of this project is to design a secure, segmented, and monitored cloud architecture that follows real-life enterprise principles while remaining within an academic scope and cost limitations.
+
+The architecture is based on a three-tier model (Web / App / DB) with centralized logging, controlled ingress and egress, and strong network segmentation.
+
+Networking Components – Usage and Design Rationale
+
+Below is a detailed explanation of which Azure networking components are used, partially used, or intentionally not used, along with the reasoning.
+
+1. Network Foundation
+Components
+Virtual Network (VNet)
+Subnets
+VNet Peering
+Virtual WAN
+Usage
+✅ Used
+Virtual Network (VNet)
+Acts as the main network boundary for all resources.
+Subnets (Web, App, DB)
+Provide logical isolation between tiers and allow security enforcement via NSGs and routing.
+❌ Not Used
+VNet Peering – All resources are deployed within a single VNet.
+Virtual WAN – Not required for a single-region, single-VNet architecture.
+Reasoning:
+The project does not require multi-region connectivity or hub-and-spoke topology at this stage.
+
+
+2. Hybrid Connectivity
+Components
+ExpressRoute
+VPN Gateway
+Route Server
+Usage
+❌ Not Used
+Reasoning:
+This is a cloud-only academic project with no real on-premises environment.
+ExpressRoute and VPN Gateway were intentionally excluded due to cost and scope.
+
+
+3. Perimeter Security
+Components
+Azure Firewall Premium
+Firewall Manager
+DDoS Protection
+Usage
+✅ Used
+Azure DDoS Protection (Standard)
+Protects public-facing resources against volumetric attacks.
+❌ Not Used
+Azure Firewall Premium
+Firewall Manager
+Reasoning:
+Security is enforced using NSGs and private subnets. Firewall Premium was excluded due to cost and scope constraints.
+
+
+4. Micro-Segmentation
+Components
+Network Security Groups (NSG)
+Application Security Groups (ASG)
+User Defined Routes (UDR)
+Virtual Network Manager
+Usage
+✅ Used
+NSGs – Strict inbound and inter-subnet traffic control.
+UDRs – Control outbound traffic and enforce NAT-based egress.
+❌ Not Used
+ASGs – Skipped to keep configuration simpler.
+Virtual Network Manager – Not required for a single-VNet design.
+
+
+5. Private Connectivity
+Components
+Private Link
+Private Endpoints
+Private DNS Zones
+DNS Private Resolver
+Usage
+✅ Used
+Azure Private DNS Resolver – Enables internal DNS resolution inside the VNet.
+❌ Not Used
+Private Endpoints / Private Link – No PaaS services are currently used.
+Service Endpoints – Not required.
+
+
+6. Ingress Protection
+Components
+Application Gateway (WAF)
+Azure Front Door
+Load Balancer
+Usage
+✅ Used
+Azure Load Balancer (Standard)
+Distributes HTTP traffic to Web VMs.
+❌ Not Used
+Application Gateway (WAF) – Excluded due to cost and complexity.
+Azure Front Door – Global routing not required.
+
+
+7. Monitoring and Logging
+Components
+Azure Monitor
+Log Analytics Workspace
+Network Watcher
+Traffic Analytics
+Connection Monitor
+Usage
+✅ Implemented
+Azure Monitor + Log Analytics
+Subscription Activity Logs
+VM Syslog
+VM Performance Metrics (CPU, Memory)
+❌ Not Used
+Traffic Analytics
+Connection Monitor
+Reasoning:
+Centralized logging is sufficient to prove observability and auditability for this project.
+
+
+8. Administrative Access
+Components
+Azure Bastion
+Just-In-Time (JIT) VM Access
+Usage
+🟡 Partially Planned
+Architecture supports Bastion, but not fully deployed due to cost.
+JIT not enabled; access is restricted using NSGs and SSH keys.
+
+
+9. DNS
+Components
+Azure DNS
+Private DNS Zones
+DNS Private Resolver
+Usage
+✅ Used
+Azure DNS (Public) – Public name resolution.
+Private DNS Resolver – Internal DNS resolution.
+
+
+10. NAT / Egress
+Components
+Virtual Network NAT Gateway
+Usage
+✅ Used
+NAT Gateway – Secure outbound internet access for App and DB subnets without public IPs.
+
+Summary
+This architecture demonstrates:
+Strong network segmentation
+Controlled ingress and egress
+Centralized logging and monitoring
+Cost-aware enterprise design
+Some enterprise-grade components were intentionally excluded to keep the solution aligned with academic scope, cost constraints, and deployment complexity.
+
+Notes on PCI Compliance
+The current implementation demonstrates foundational security concepts, but it is not fully PCI DSS compliant.
+Additional components such as WAF, Firewall Premium, private endpoints, encryption controls, and audit hardening would be required for a production PCI environment.
