@@ -1,4 +1,6 @@
+
 resource "azurerm_resource_group" "rg" {
-  name     = "rg-enterprise"
+  name     = "rg-${local.prefix}"
   location = var.location
+  tags     = local.tags
 }

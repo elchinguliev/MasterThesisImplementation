@@ -25,6 +25,15 @@ resource "azurerm_lb_backend_address_pool" "backend_pool" {
   depends_on = [time_sleep.after_lb]
 }
 
+# ✅ WEB NIC-ni backend pool-a bağlayan ən vacib hissə
+resource "azurerm_network_interface_backend_address_pool_association" "web_nic_to_lb" {
+  network_interface_id    = azurerm_network_interface.web_nic.id
+  ip_configuration_name   = "internal"
+  backend_address_pool_id = azurerm_lb_backend_address_pool.backend_pool.id
+
+  depends_on = [azurerm_lb_backend_address_pool.backend_pool]
+}
+
 resource "azurerm_lb_probe" "http_probe" {
   name            = "http-probe"
   loadbalancer_id = azurerm_lb.lb.id
@@ -44,6 +53,19 @@ resource "azurerm_lb_rule" "http_rule" {
   frontend_ip_configuration_name = "frontend"
   backend_address_pool_ids       = [azurerm_lb_backend_address_pool.backend_pool.id]
   probe_id                       = azurerm_lb_probe.http_probe.id
+
+  depends_on = [time_sleep.after_lb]
+}
+
+# (Optional) HTTPS rule də istəyirsənsə:
+resource "azurerm_lb_rule" "https_rule" {
+  name                           = "https-rule"
+  loadbalancer_id                = azurerm_lb.lb.id
+  protocol                       = "Tcp"
+  frontend_port                  = 443
+  backend_port                   = 443
+  frontend_ip_configuration_name = "frontend"
+  backend_address_pool_ids       = [azurerm_lb_backend_address_pool.backend_pool.id]
 
   depends_on = [time_sleep.after_lb]
 }

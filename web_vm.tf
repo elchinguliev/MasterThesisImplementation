@@ -9,6 +9,7 @@ resource "azurerm_network_interface" "web_nic" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+
 resource "azurerm_linux_virtual_machine" "webvm" {
   name                = "webvm"
   resource_group_name = azurerm_resource_group.rg.name
@@ -24,6 +25,18 @@ resource "azurerm_linux_virtual_machine" "webvm" {
     username   = var.admin_username
     public_key = file(var.ssh_public_key)
   }
+
+  # ✅ Auto install nginx
+  custom_data = base64encode(<<EOF
+#cloud-config
+package_update: true
+packages:
+  - nginx
+runcmd:
+  - systemctl enable nginx
+  - systemctl start nginx
+EOF
+  )
 
   os_disk {
     caching              = "ReadWrite"
