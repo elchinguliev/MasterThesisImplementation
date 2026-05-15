@@ -33,3 +33,12 @@ variable "cdn_subdomain" {
   type    = string
   default = "www"
 }
+variable "lb_dns_label" {
+  type    = string
+  default = "enterprise-dev-elchin-lb-new001"
+}
+
+variable "cdn_endpoint_name" {
+  type    = string
+  default = "enterprise-dev-elchin-afd-new001"
+}

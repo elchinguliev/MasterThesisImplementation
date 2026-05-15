@@ -19,3 +19,12 @@ resource "azurerm_subnet_route_table_association" "db" {
   subnet_id      = azurerm_subnet.db.id
   route_table_id = azurerm_route_table.private_rt.id
 }
+
+resource "azurerm_route" "private_default_to_firewall" {
+  name                   = "default-to-firewall"
+  resource_group_name    = azurerm_resource_group.rg.name
+  route_table_name       = azurerm_route_table.private_rt.name
+  address_prefix         = "0.0.0.0/0"
+  next_hop_type          = "VirtualAppliance"
+  next_hop_in_ip_address = "10.0.30.4"
+}

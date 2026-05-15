@@ -112,14 +112,4 @@ resource "azurerm_monitor_data_collection_rule_association" "web_vm_logs" {
   data_collection_rule_id = azurerm_monitor_data_collection_rule.linux_dcr.id
 }
 
-############################################
-# 5) Useful outputs (optional but handy)
-############################################
 
-output "log_analytics_workspace_name" {
-  value = azurerm_log_analytics_workspace.law.name
-}
-
-output "log_analytics_workspace_id" {
-  value = azurerm_log_analytics_workspace.law.id
-}
